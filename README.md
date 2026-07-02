@@ -28,9 +28,7 @@ BrainTumorDetection/
 > this repo — they're real outputs of an actual training run (a trained model file,
 > real metrics, real plots), and only exist once you've run `train.py` yourself against
 > the dataset. Committing placeholder versions of them would be misleading, so they're
-> left out on purpose. Consider adding them to `.gitignore`, or committing the specific
-> run's artifacts once you have them if you want to showcase results in the repo.
-
+> left out on purpose.
 ## Setup
 
 ```bash
@@ -135,9 +133,7 @@ overfitting (val loss kept falling in step with train loss the whole way through
 > pipeline also runs a final evaluation on a completely held-out **test** set
 > afterward (never seen during training or validation) and writes the results to
 > `classification_report.txt`, `confusion_matrix.png`, and `roc_curve.png` — those
-> are the numbers to cite as the model's true generalization performance. Paste that
-> output in and this section can be filled in with exact test accuracy, precision,
-> recall, and AUC.
+> are the numbers to cite as the model's true generalization performance.
 
 As a rough expectation based on this dataset size (~253 images) and this training
 curve, held-out test performance is likely in the 94–98% accuracy range with AUC
