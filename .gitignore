@@ -1,0 +1,19 @@
+# Generated training artifacts (see README for why these aren't pre-committed)
+*.keras
+*.h5
+plot.jpg
+confusion_matrix.png
+roc_curve.png
+training_history.csv
+classification_report.txt
+label_classes.json
+checkpoint_*_best.keras
+brain_tumor_dataset/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
