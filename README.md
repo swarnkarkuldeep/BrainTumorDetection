@@ -135,7 +135,7 @@ overfitting (val loss kept falling in step with train loss the whole way through
 > `classification_report.txt`, `confusion_matrix.png`, and `roc_curve.png` — those
 > are the numbers to cite as the model's true generalization performance.
 
-As a rough expectation based on this dataset size (~7153 images) and this training
+As a rough expectation based on this dataset size (~253 images) and this training
 curve, held-out test performance is likely in the 94–98% accuracy range with AUC
 above 0.98, but treat that as an estimate until you've got the actual
 `classification_report.txt` in hand.
