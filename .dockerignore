@@ -1,0 +1,15 @@
+.venv
+brain_tumor_dataset
+frontend/node_modules
+frontend/dist
+__pycache__
+*.pyc
+.git
+.gitignore
+PROGRESS.md
+*.png
+*.jpg
+checkpoint_*_best.keras
+training_history.csv
+classification_report.txt
+plot.jpg

@@ -3,66 +3,49 @@
 """
 predict.py — run the trained brain tumor detector on a single MRI image.
 
+Usage:
+    python predict.py --image path/to/scan.jpg
+    python predict.py                       # prompts for a path interactively
 """
 
-import json
+import argparse
 from pathlib import Path
 
-import cv2
-import numpy as np
-from tensorflow.keras.models import load_model
-
-IMG_SIZE = 224
-MODEL_PATH = "brain_tumor_detector.keras"
-LABELS_PATH = "label_classes.json"
-
-
-def load_labels(labels_path: Path):
-    if not labels_path.exists():
-        raise FileNotFoundError(
-            f"Label file not found at {labels_path}. It's created automatically by "
-            "train.py — make sure it's sitting next to your model file."
-        )
-    with open(labels_path) as f:
-        return json.load(f)
+from inference import (
+    DEFAULT_LABELS_PATH,
+    DEFAULT_MODEL_PATH,
+    load_model_and_labels,
+    predict,
+    preprocess_image,
+)
 
 
-def preprocess_image(image_path: Path, img_size: int = IMG_SIZE) -> np.ndarray:
-    image = cv2.imread(str(image_path))
-    if image is None:
-        raise ValueError(f"Could not read image at {image_path}. Is it a valid image file?")
-
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = cv2.resize(image, (img_size, img_size))
-    image = image.astype("float32") / 255.0
-    return np.expand_dims(image, axis=0)  # add batch dimension
-
-
-def predict(model, image_batch: np.ndarray, class_names):
-    probabilities = model.predict(image_batch, verbose=0)[0]
-    predicted_index = int(np.argmax(probabilities))
-    return {
-        "predicted_class": class_names[predicted_index],
-        "confidence": float(probabilities[predicted_index]),
-        "all_probabilities": {
-            class_names[i]: float(probabilities[i]) for i in range(len(class_names))
-        },
-    }
+def parse_args():
+    parser = argparse.ArgumentParser(description="Predict tumor / no tumor on an MRI image.")
+    parser.add_argument("--image", type=str, default=None, help="Path to the MRI image.")
+    parser.add_argument("--model", type=str, default=DEFAULT_MODEL_PATH,
+                         help="Path to the trained .keras model file.")
+    parser.add_argument("--labels", type=str, default=DEFAULT_LABELS_PATH,
+                         help="Path to label_classes.json.")
+    args, _unknown = parser.parse_known_args()
+    return args
 
 
 def main():
-    image_path_str = input("Enter the path to the MRI image: ").strip().strip('"').strip("'")
+    args = parse_args()
+
+    image_path_str = args.image
+    if not image_path_str:
+        image_path_str = input("Enter the path to the MRI image: ").strip().strip('"').strip("'")
     image_path = Path(image_path_str)
 
     if not image_path.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
 
-    print(f"\nLoading model from {MODEL_PATH} ...")
-    model = load_model(MODEL_PATH)
+    print(f"\nLoading model from {args.model} ...")
+    model, class_names = load_model_and_labels(args.model, args.labels)
 
-    class_names = load_labels(Path(LABELS_PATH))
-
-    image_batch = preprocess_image(image_path, img_size=IMG_SIZE)
+    image_batch = preprocess_image(image_path)
     result = predict(model, image_batch, class_names)
 
     print("\n--- Prediction ---")

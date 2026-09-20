@@ -14,6 +14,10 @@ brain_tumor_dataset/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+.venv/
 
 # OS
 .DS_Store
+
+# Private planning/progress notes (not for GitHub)
+PROGRESS.md

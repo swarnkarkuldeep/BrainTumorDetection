@@ -1,0 +1,370 @@
+.app {
+  max-width: 680px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- header ---------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.header__mark {
+  display: inline-flex;
+  color: var(--signal);
+}
+
+.header__name {
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+
+.header__tagline {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+/* ---------- main / layout ---------- */
+
+.app__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 48px 0 32px;
+}
+
+/* ---------- upload frame ---------- */
+
+.upload-frame {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  border: 1px dashed var(--line-bright);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 20px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.upload-frame--dragging {
+  border-color: var(--signal);
+  background: var(--surface-raised);
+}
+
+.upload-frame.frame--safe {
+  border-color: var(--signal-dim);
+}
+
+.upload-frame.frame--alert {
+  border-color: var(--alert);
+}
+
+.upload-frame__corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--signal);
+  opacity: 0.8;
+}
+
+.upload-frame__corner--tl {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.upload-frame__corner--tr {
+  top: -1px;
+  right: -1px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.upload-frame__corner--bl {
+  bottom: -1px;
+  left: -1px;
+  border-right: none;
+  border-top: none;
+}
+
+.upload-frame__corner--br {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+.upload-frame__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 0;
+}
+
+.upload-frame__placeholder:hover {
+  color: var(--text);
+}
+
+.upload-frame__placeholder p {
+  margin: 0;
+  font-size: 0.95rem;
+  max-width: 26ch;
+  text-align: center;
+}
+
+.upload-frame__preview {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  line-height: 0;
+}
+
+.upload-frame__preview img {
+  max-height: 320px;
+  object-fit: contain;
+  display: block;
+}
+
+.scan-sweep {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.scan-sweep::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(69, 214, 194, 0.35),
+    transparent
+  );
+  animation: sweep 1.8s linear infinite;
+}
+
+@keyframes sweep {
+  from {
+    top: -30%;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+.upload-frame__meta {
+  margin: 16px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.upload-frame__change {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: var(--signal);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.upload-frame__change:hover {
+  text-decoration: underline;
+}
+
+/* ---------- analyze button + status ---------- */
+
+.analyze-button {
+  background: var(--signal);
+  color: #06201c;
+  border: none;
+  border-radius: 3px;
+  padding: 12px 32px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.analyze-button:hover {
+  filter: brightness(1.08);
+}
+
+.analyze-button:active {
+  filter: brightness(0.95);
+}
+
+.status-line {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--signal);
+  margin: 0;
+}
+
+/* ---------- result panel ---------- */
+
+.result-panel {
+  width: 100%;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.result-panel--error {
+  border-top-color: var(--caution);
+  color: var(--caution);
+  font-size: 0.9rem;
+}
+
+.result-panel--error p {
+  margin: 0;
+}
+
+.result-panel__verdict {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.result-panel__label {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.result-panel__label--safe {
+  color: var(--signal);
+}
+
+.result-panel__label--alert {
+  color: var(--alert);
+}
+
+.result-panel__confidence {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.result-panel__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.probability-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 56px;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.probability-row__label {
+  color: var(--text-dim);
+}
+
+.probability-row__track {
+  height: 6px;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.probability-row__fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.probability-row__fill--no {
+  background: var(--signal);
+}
+
+.probability-row__fill--yes {
+  background: var(--alert);
+}
+
+.probability-row__value {
+  color: var(--text-dim);
+  text-align: right;
+}
+
+.result-panel__caution {
+  margin: 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--caution);
+  color: var(--caution);
+  font-size: 0.85rem;
+  background: var(--surface);
+}
+
+/* ---------- footer ---------- */
+
+.footer {
+  margin-top: auto;
+  padding: 20px 0 28px;
+  border-top: 1px solid var(--line);
+}
+
+.footer p {
+  margin: 0;
+  max-width: 58ch;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 480px) {
+  .app {
+    padding: 0 16px;
+  }
+
+  .header__tagline {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+
+  .upload-frame {
+    min-height: 220px;
+    padding: 28px 16px 18px;
+  }
+
+  .result-panel__label {
+    font-size: 1.2rem;
+  }
+}

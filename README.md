@@ -103,42 +103,66 @@ current directory; override with `--model` and `--labels` if you've moved them.
 
 ## Latest run results
 
-Results from an actual training run (`--head-epochs 15 --finetune-epochs 10`, batch size 8):
+Results from an actual training run — `python train.py --dataset-path brain_tumor_dataset`
+(defaults: `--head-epochs 15 --finetune-epochs 10 --batch-size 8`) — against the full
+506-image dataset (354 train / 76 validation / 76 test, stratified by class).
 
-**Phase 1 — head training (VGG16 frozen, lr = 1e-3)**
-Started at 51.7% train accuracy / 76.3% val accuracy (epoch 1) and climbed steadily,
-finishing at:
+### Test set — the numbers that matter
 
-|          | Train | Validation |
-| -------- | ----- | ---------- |
-| Accuracy | 80.5% | 90.8%      |
-| Loss     | 0.421 | 0.306      |
+This is the held-out test set: never touched during training or validation, evaluated
+exactly once at the end.
 
-**Phase 2 — fine-tuning (last VGG16 block unfrozen, lr = 1e-5)**
-Fine-tuning gave a clear, consistent boost — both accuracy climbing and loss still
-dropping every epoch, exactly the pattern you want to see:
+<table>
+<tr><td>
+
+**Accuracy: 89.47%**
+
+|          | Precision | Recall | F1   | Support |
+| -------- | --------- | ------ | ---- | ------- |
+| no       | 0.80      | 0.97   | 0.88 | 29      |
+| yes      | 0.98      | 0.85   | 0.91 | 47      |
+
+</td><td>
+
+See `confusion_matrix.png` and `roc_curve.png` (generated alongside the model)
+for the full confusion matrix and ROC/AUC curve.
+
+</td></tr>
+</table>
+
+> Recall on `no` (97%) is higher than recall on `yes` (85%) — the model is more likely
+> to miss a tumor than to flag a false one. Combined with the confidence-based warning
+> in `predict.py`, treat any `yes`-leaning-but-low-confidence result as inconclusive
+> rather than a confident "no tumor."
+
+### Training curve
+
+**Phase 1 — head training** (VGG16 frozen, lr = 1e-3)
+Ran 14 of 15 requested epochs; `EarlyStopping` (patience 5, monitor `val_loss`) kicked
+in and restored the best weights from epoch 9:
+
+|          | Epoch 1 (start) | Epoch 9 (best, restored) | Epoch 14 (last run) |
+| -------- | --------------- | ------------------------ | -------------------- |
+| Accuracy | 55.9% / 71.1%   | 77.0% / **78.9%**         | 81.6% / 77.6%         |
+| Loss     | 0.714 / 0.625   | 0.545 / **0.431**         | 0.417 / 0.472         |
+
+*(format: train / validation)*
+
+**Phase 2 — fine-tuning** (last VGG16 conv block unfrozen, lr = 1e-5)
+Ran the full 10 epochs; the final model uses the best weights, restored from epoch 6:
 
 | Epoch | Train Acc | Val Acc   | Train Loss | Val Loss  |
 | ----- | --------- | --------- | ---------- | --------- |
-| 1     | 79.7%     | 88.2%     | 0.440      | 0.275     |
-| 3     | 88.4%     | 93.4%     | 0.290      | 0.202     |
-| 5     | 92.9%     | 94.7%     | 0.199      | 0.157     |
-| 7     | 93.2%     | 96.1%     | 0.167      | 0.123     |
-| 10    | **98.0%** | **98.7%** | **0.088**  | **0.058** |
+| 1     | 77.7%     | 81.6%     | 0.458      | 0.426     |
+| 3     | 88.7%     | 85.5%     | 0.264      | 0.354     |
+| 6     | **93.8%** | **89.5%** | **0.183**  | **0.305** |
+| 8     | 94.6%     | 85.5%     | 0.133      | 0.290     |
+| 10    | 95.5%     | 85.5%     | 0.122      | 0.377     |
 
-Final epoch: **98.68% validation accuracy, 0.058 validation loss** — no signs of
-overfitting (val loss kept falling in step with train loss the whole way through).
+Epoch 6 had the lowest validation loss of the run, so those are the weights saved to
+`brain_tumor_detector.keras` — which lines up with the 89.47% test accuracy above.
 
-> **Note:** the numbers above are _validation_ metrics captured during training. The
-> pipeline also runs a final evaluation on a completely held-out **test** set
-> afterward (never seen during training or validation) and writes the results to
-> `classification_report.txt`, `confusion_matrix.png`, and `roc_curve.png` — those
-> are the numbers to cite as the model's true generalization performance.
-
-As a rough expectation based on this dataset size (~253 images) and this training
-curve, held-out test performance is likely in the 94–98% accuracy range with AUC
-above 0.98, but treat that as an estimate until you've got the actual
-`classification_report.txt` in hand.
+> Full per-epoch numbers for both phases are in `training_history.csv`.
 
 ## Disclaimer
 
