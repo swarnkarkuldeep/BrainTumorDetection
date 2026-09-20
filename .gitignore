@@ -15,9 +15,7 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 .venv/
+.pytest_cache/
 
 # OS
 .DS_Store
-
-# Private planning/progress notes (not for GitHub)
-PROGRESS.md
